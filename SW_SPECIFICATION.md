@@ -1,6 +1,6 @@
 # Goose Purge SW specification
-V1 draft  
-23.10.2025  
+V2  
+31.10.2025  
 By Graylag  
 
 ## Purpose and goals
@@ -16,11 +16,13 @@ GPSW – Goose Purge SW
 Klipper – 3D printer software designed to run as an app, typicaly on a embedded Linux machine  
 Klipper macro – gcode macro (and associated definitions) defined according Klipper documentation. Uses Jinja2 templates for scripting. Typicaly stored within one of the *.cfg files within configuration folder  
 Klipper module – A host module, python module loaded by Klipper. Stored in klippy/extras/ folder as a *.py file  
+Klippy - App part of the Klipper running on the RPi. (This is what makes the Klipper "tick")
+Moonraker - Web API for the Klipper. (Without this, Klipper/Klippy is just a terminal app, incapable talking with the world; This is the bridge between Klipper/Klippy and interfaces such as Mainsail)
 
 ## Organization
 All main decisions shall be made by or together with the Project owner. The same applies to any kind of conflicts or issues.  
 Project shall be stored and managed in the GitHub  
-Default GitHub repository for the project is goose-purge-software  
+Default GitHub repository for the project is Goose-Purge-Software  
 Default communication method for the development team is Discord, specifically dedicated thread within GOOSE Forge  
 Default communication language for the project is English. All permanent documentation must be in English.  Temporary notes of personal nature may be made in Czech or in German  
 
@@ -74,10 +76,14 @@ The GPSW is split in between following files:
     -	R/W file
     -	Included from goose_purge.cfg
     -	Contains definitions of hardware
--	goose_purge_variables.cfg
+-	goose_purge_config_default.cfg
+	-	Read only file
+ 	-	Included from goose_purge.cfg (note: must be included BEFORE goose_purge_config.cfg)
+  	-	Copies the goose_purge_config.cfg and serves as a fall back solution if some parameter is not included or is commented in user configurable config file.
+-	goose_purge_config.cfg
     -	R/W file
     -	Included from goose_purge.cfg
-    -	Contains user accessible (public) variables, used to tune the behaviour
+    -	Contains user accessible (public) configuration parameters, used to tune the behaviour
 
 Presented file structure is only an initial proposal and can be changed during the development.
 
@@ -95,7 +101,7 @@ The newest version of the Klipper shall always be targeted as a target platform.
 Klipper based derivatives (namely but not exclusively Kalico) shall be supported when possible. In case any imcompatibilities are identified, it shall be documented and appropriate measures taken.  
 The GPSW shall be designed as a standalone macro (i.e. without associated Klipper module).  
 The GPSW shall be designed with possibility of later extension through Klipper module. Any features which might take benefit from being handled by a module shall be identified and documented  
-The GPSW shall interface physical devices (motors, sensors) exclusively through default Klipper modules. Usage of any external modules is not alowed  
+The GPSW shall interface physical devices (motors, sensors) exclusively through default Klipper modules. Usage of any external modules is not alowed.  
 The GPSW shall access selected system variables through `printer` pseudo variables  
 
 ### Interfaces to multimaterial printing modules
@@ -135,6 +141,16 @@ The GPSW may support input signals, such as:
 All servos shall have defined initial position, which is considered safe and which the printer sets during the initialization.  
 All servos shall have automatic cutoff when not in use. to limit the load of its electronics. This can be achieved for example by a delayed macro.  
 
+## Klipper/Moonraker integration
+The default distribution model of the GPSW is by cloning GitHub repo to dedicated host folder (other than klipper configuration folder).  
+Updates of the GPSW shall be handled automaticaly by Moonraker Update manager.  
+Read-only files shall stay in default cloned folder and be symlinked into klipper configuration folder. This ensures they will be automaticaly updated.  
+R/W files shall be copied to klipper configuration folder. This means they will not be automaticaly updated and user is responsible for keeping them up to date.  
+Bash script shall be provided, that will manage the symlinking and copying.  
+Detailed instruction for instalation for users shall be provided. Language used shall be simple and straightforward.  
+Script for automated update of R/W files is optional and may be added in the future.  
+
+
 ## Architecture
 ### Overal concept
 The GPSW v1 shall be composed of small, modular macro blocks. Maximum modularity and granularity shall be achieved for maximum transparency and extendability.  
@@ -142,11 +158,16 @@ The GPSW shall conceptually be agnostic in regards to purging methodology. That 
 	note: this does not mean any other purging method shall be built in, just that it should be possible without conceptual redesign.  
 The GPSW may reuse portions of code from Blobifier, either conceptually or literally, taking in mind rules of GPL-3.
 
+
+
 ### Variables and memory
-All user accessible variables shall be stored in `_GOOSE_PURGE_VARIABLES` macro, located in goose_purge_variables.cfg file.  
+All user accessible parameters shall be stored in user defined config section `[goose_purge_config]`, located in goose_purge_config.cfg and goose_purge_config.cfg files.  
+This arrangement means klipper loads all default values from default file and then overwrites them with user defined ones if they are available. All such parameters are considered static and cannot be changed on runtime.
 All internal variables which are to be persistent and accessible by several macros shall be stored in `_GOOSE_PURGE_INTERNAL_VARIABLES` macro, located in goose_purge.cfg.  
 Local variables used exclusively within the same macro may be stored localy within said macro.  
 No macro shall be accessing other macro variables (except above mentioned "variables" containter macros).  
+Every macro shall start by loading external variables into internal variables. No external variables shall be accessed from the middle of the macro.  
+Write to external variables shall be done only on the end of each macro.  
 
 ### Flow of the program
 #### High level overview
