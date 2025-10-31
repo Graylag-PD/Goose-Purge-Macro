@@ -76,14 +76,14 @@ The GPSW is split in between following files:
     -	R/W file
     -	Included from goose_purge.cfg
     -	Contains definitions of hardware
--	goose_purge_config_default.cfg
+-	goose_purge_variables_default.cfg
 	-	Read only file
- 	-	Included from goose_purge.cfg (note: must be included BEFORE goose_purge_config.cfg)
-  	-	Copies the goose_purge_config.cfg and serves as a fall back solution if some parameter is not included or is commented in user configurable config file.
--	goose_purge_config.cfg
+ 	-	Included from goose_purge.cfg
+  	-	Copies the goose_purge_variables.cfg and serves as a fall back solution if some parameter is not included or is commented in user configurable config file.
+-	goose_purge_variables.cfg
     -	R/W file
     -	Included from goose_purge.cfg
-    -	Contains user accessible (public) configuration parameters, used to tune the behaviour
+    -	Contains user accessible (public) configuration variables, used to tune the behaviour
 
 Presented file structure is only an initial proposal and can be changed during the development.
 
@@ -161,13 +161,15 @@ The GPSW may reuse portions of code from Blobifier, either conceptually or liter
 
 
 ### Variables and memory
-All user accessible parameters shall be stored in user defined config section `[goose_purge_config]`, located in goose_purge_config.cfg and goose_purge_config.cfg files.  
-This arrangement means klipper loads all default values from default file and then overwrites them with user defined ones if they are available. All such parameters are considered static and cannot be changed on runtime.
+All user accessible parameters shall be stored in `_GOOSE_PURGE_VARIABLES` macro, located in goose_purge_variables.cfg file.  
+All user accessible parameters shall be stored in `_GOOSE_PURGE_VARIABLES_DEFAULT` macro, located in goose_purge_variables_default.cfg file.  
 All internal variables which are to be persistent and accessible by several macros shall be stored in `_GOOSE_PURGE_INTERNAL_VARIABLES` macro, located in goose_purge.cfg.  
 Local variables used exclusively within the same macro may be stored localy within said macro.  
 No macro shall be accessing other macro variables (except above mentioned "variables" containter macros).  
 Every macro shall start by loading external variables into internal variables. No external variables shall be accessed from the middle of the macro.  
 Write to external variables shall be done only on the end of each macro.  
+All variables loaded from `_GOOSE_PURGE_VARIABLES` shall be tested for presence and supplemented by default value from `_GOOSE_PURGE_VARIABLES_DEFAULT`. Following structure shall be used:  
+	`{% set `local_variable = printer["gcode_macro _GOOSE_PURGE_VARIABLES"].user_variable | default(printer["gcode_macro _GOOSE_PURGE__VARIABLES_DEFAULT"].default_variable) | int %}
 
 ### Flow of the program
 #### High level overview
