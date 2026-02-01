@@ -11,7 +11,7 @@ Add following lines to moonraker.conf:
 ```
 [update_manager goose_purge_macro]
 type: git_repo
-primary_branch: main
+primary_branch: v0-dev
 path: ~/goose_purge_macro
 origin: https://github.com/Graylag-PD/Goose-Purge-Macro.git
 managed_services: klipper
