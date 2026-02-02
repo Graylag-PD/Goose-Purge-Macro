@@ -35,9 +35,9 @@ else
 	echo "	2 - Belt purge with Stepper motor"
 	read -p "Purger type: " purger_type
 	if [ $purger_type -eq 1 ]; then
-		cp --update=none $REPO_DIR/goose_purge-dcmot.cfg $KLIPPER_CONF_DIR/goose_purge.cfg
+		cp $REPO_DIR/goose_purge-dcmot.cfg $KLIPPER_CONF_DIR/goose_purge.cfg
 	elif [ $purger_type -eq 2 ]; then
-		cp --update=none $REPO_DIR/goose_purge-stpmot.cfg $KLIPPER_CONF_DIR/goose_purge.cfg
+		cp $REPO_DIR/goose_purge-stpmot.cfg $KLIPPER_CONF_DIR/goose_purge.cfg
 	else
 		echo "Invalid selection, configuration file not copied. Copy the correct file manually or run the installation script again and select the valid value"
 		echo ""
