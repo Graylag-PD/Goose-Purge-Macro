@@ -5,6 +5,7 @@ echo "------------------------------------------------------------"
 #
 echo "Installing configuration files"
 KLIPPER_CONF_DIR="${HOME}/printer_data/config"
+REPO_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # check for folder location
 if [ ! -d "$KLIPPER_CONF_DIR" ]; then
     echo "New structure folder ~/printer_data not found, looking for a legacy structure..."
@@ -19,7 +20,7 @@ if [ ! -d "$KLIPPER_CONF_DIR" ]; then
     fi
 fi
 echo "Configuration files will be copied to: $KLIPPER_CONF_DIR"
-ln -sf goose_purge_core.cfg $KLIPPER_CONF_DIR/goose_purge_core.cfg
+ln -sf $REPO_DIR/goose_purge_core.cfg $KLIPPER_CONF_DIR/goose_purge_core.cfg
 echo ""
 
 # 2 copy the configuration file
@@ -34,9 +35,9 @@ else
 	echo "	2 - Belt purge with Stepper motor"
 	read -p "Purger type: " purger_type
 	if [ $purger_type -eq 1 ]; then
-		cp --update=none goose_purge-dcmot.cfg $KLIPPER_CONF_DIR/goose_purge.cfg
+		cp --update=none $REPO_DIR/goose_purge-dcmot.cfg $KLIPPER_CONF_DIR/goose_purge.cfg
 	elif [ $purger_type -eq 2 ]; then
-		cp --update=none goose_purge-stpmot.cfg $KLIPPER_CONF_DIR/goose_purge.cfg
+		cp --update=none $REPO_DIR/goose_purge-stpmot.cfg $KLIPPER_CONF_DIR/goose_purge.cfg
 	else
 		echo "Invalid selection, configuration file not copied. Copy the correct file manually or run the installation script again and select the valid value"
 		echo ""
@@ -50,10 +51,10 @@ EXTRAS_DIR="${HOME}/klipper/klippy/extras"
 # check for existence and write permissions
 if [ -d $EXTRAS_DIR ]; then
     if [ -w $EXTRAS_DIR ]; then
-        ln -sf goose_purge.py $EXTRAS_DIR/goose_purge.py
+        ln -sf $REPO_DIR/goose_purge.py $EXTRAS_DIR/goose_purge.py
     else
         # ask for sudo if we don't have write permissions
-        sudo ln -sf goose_purge.py $EXTRAS_DIR/goose_purge.py
+        sudo ln -sf $REPO_DIR/goose_purge.py $EXTRAS_DIR/goose_purge.py
     fi
 else
     echo "Error: Klipper extras folder not found"
