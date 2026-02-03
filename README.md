@@ -16,7 +16,7 @@ Finally the third bigger change is an improved support for the HappyHare MMU con
 Many other smaller tweaks have been made with relatively minor impact. Here are points where the GPM behaves differently from v0.7.3  
 - Macro now processes both PURGE_LENGTH and PURGE_VOLUME parameters and adds them up if both are provided.  
 - Parameters LENGTH and VOLUME are no longer supported.  
-- A new parameter HAPPYHARE has been introduced to instruct the macro to interface with the HappyHare. A legacy wrapper `_goose_purge_hh` remains in place for compatibility reasons, but is now discouraged to use.  
+- A new parameter HAPPYHARE has been introduced to instruct the macro to interface with the HappyHare. A wrapper `_goose_purge_hh` remains in place and can be used to directly call macro with this parameter.  
 - Macro now no longer requires Z axis homed if you don't move the Z axis during purging.  
 - Default values for some variables have been changed.  
 
@@ -122,12 +122,14 @@ SET_GCODE_VARIABLE MACRO=_GOOSE_PURGE_VARIABLES VARIABLE=rtr_dwell VALUE=your va
 ```
 
 ### HappyHare interfacing
-Previous integration with the HappyHare was not correct in some aspects and may have been causing some hard to diagnose issues. Which is why the interfacing has been changed and the new correct way of calling the macro from the HH is with the following command  
+Previous integration with the HappyHare was not correct in some aspects and may have been causing some hard to diagnose issues. The call for purge action remains the same.  
 ```
-GOOSE_PURGE HAPPYHARE=1
+_goose_purge_hh
 ```
+Alternatively you can also call macro with the `HAPPYHARE=1` parameter, but it has been reported, that the Happy Hare `purge_macro:` handle does not work with parameters.  
+  
 Note, that this will cause the macro to override the initial and final deretractions to match those expected by HH, and to ignore any PURGE_LENGTH or PURGE_VOLUME parameters, should they be included.  
-The old way of calling the macro through a wrapper `_goose_purge_hh` remains in place and behaves exactly the same as it did in previous releases, however the usage of this wrapper is now discouraged in favor of the new way.  
+If you would like to restore the way the wrapper worked in previous versions, add into your configuration file following variable `variable_legacy_hh_integration: True`. Note, that the legacy mode is present only for the testing purposes and may be removed in future revisions.
   
 You should now also change your HappyHare configuration to call the purge macro from the `purge_macro:` handle (in mmu_parameters.cfg) instead of the `variable_user_post_load_extension` variable. The only thing to keep in mind is that the `purge_macro:` handle is case sensitive, so you need to watch your capitalization.  
 
