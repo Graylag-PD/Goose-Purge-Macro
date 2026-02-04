@@ -124,6 +124,7 @@ else
         echo "Update manager in moonraker.conf already set"
     else
         echo "Adding Update Manager configuration to moonraker.conf..."
+
         cat << EOF >> "$MOONRAKER_CONF"
 
 $SECTION_NAME
@@ -131,14 +132,19 @@ type: git_repo
 primary_branch: beta
 path: ~/goose_purge_macro
 origin: https://github.com/Graylag-PD/Goose-Purge-Macro.git
+install_script: install.sh
+EOF
+
+        # Only add install_args if explicitly used
+        if [ -n "$INSTALL_ARGS" ]; then
+            echo "install_args: $INSTALL_ARGS" >> "$MOONRAKER_CONF"
+        fi
+
+        cat << EOF >> "$MOONRAKER_CONF"
 managed_services: klipper
 EOF
     fi
 fi
-
-
-
-
 
 echo -e "\n------------------------------------------------------------"
 echo "Installation script completed."
