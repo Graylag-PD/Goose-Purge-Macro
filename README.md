@@ -19,6 +19,8 @@ Many other smaller tweaks have been made with relatively minor impact. Here are 
 - A new parameter HAPPYHARE has been introduced to instruct the macro to interface with the HappyHare. A wrapper `_goose_purge_hh` remains in place and can be used to directly call macro with this parameter.  
 - Macro now no longer requires Z axis homed if you don't move the Z axis during purging.  
 - Default values for some variables have been changed.  
+  
+Additional features may be added with further releases, check the release notes for more details.  
 
 ## Instalation and updating
 ### Automated instalation.
@@ -82,7 +84,7 @@ Open the `moonraker.cfg` file and add following lines:
 ```
 [update_manager goose_purge]
 type: git_repo
-primary_branch: v0-dev
+primary_branch: beta
 path: ~/goose_purge_macro
 origin: https://github.com/Graylag-PD/Goose-Purge-Macro.git
 managed_services: klipper
@@ -102,6 +104,11 @@ bash ~/goose_purge_macro/install.sh
 ## Usage
 For the most part the usage remains the same as with the old macro, so please refer to the original GBP documentation.  
 Here are notable differences:  
+### GOOSE_BELT_MOVE testing macro 
+Since it can be impractical to test the belt movement by running full macro, an additional macro `GOOSE_BELT_MOVE` has been added (available from version 0.8.1).  
+This macro moves the belt at given speed for set time or distance. Purpose of this macro is mainly testing, but you can run it at any time.  
+Use it with `PWM=### TIME=###` parameters for DC motor variant or `SPEED=### LENGTH=###  ` parameters for stepper variant.
+
 ### On the fly variables tuning 
 Because the variables have been splitted from the main macro, you must now use following command to do on the fly variables changes  
 ```
@@ -126,8 +133,6 @@ Previous integration with the HappyHare was not correct in some aspects and may 
 ```
 _goose_purge_hh
 ```
-Alternatively you can also call macro with the `HAPPYHARE=1` parameter, but it has been reported, that the Happy Hare `purge_macro:` handle does not work with parameters.  
-  
 Note, that this will cause the macro to override the initial and final deretractions to match those expected by HH, and to ignore any PURGE_LENGTH or PURGE_VOLUME parameters, should they be included.  
 If you would like to restore the way the wrapper worked in previous versions, add into your configuration file following variable `variable_legacy_hh_integration: True`. Note, that the legacy mode is present only for the testing purposes and may be removed in future revisions.
   

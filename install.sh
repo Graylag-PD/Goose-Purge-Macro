@@ -282,8 +282,6 @@ fi
         echo "primary_branch: beta"
         echo "path: ~/goose_purge_macro"
         echo "origin: https://github.com/Graylag-PD/Goose-Purge-Macro.git"
-        echo "install_script: install.sh"
-        [ -n "$INSTALL_ARGS" ] && echo "install_args: $INSTALL_ARGS"
         echo "managed_services: klipper"
     } >> "$MOONRAKER_CONF"
 
