@@ -180,6 +180,14 @@ else
 
     if [[ "$purger_type" == "1" ]]; then
         cp "$REPO_DIR/goose_purge-dcmot.cfg" "$KLIPPER_CONF_DIR/goose_purge.cfg"
+        if [ -f "$KLIPPER_CONF_DIR/goose_belt.cfg" ]; then
+            echo "Old version of configuration file found (v0.7.3 or older)."
+            read -p "Would you like to migrate variable values? (y/N) " migrate
+            if [[ "${migrate,,}" == "y" ]]; then
+                echo "Migrating"
+                python "$REPO_DIR/migrate.py" "$KLIPPER_CONF_DIR"
+            fi
+        fi
     elif [[ "$purger_type" == "2" ]]; then
         cp "$REPO_DIR/goose_purge-stpmot.cfg" "$KLIPPER_CONF_DIR/goose_purge.cfg"
     else
