@@ -287,7 +287,7 @@ fi
         echo ""
         echo "$SECTION_RAW"
         echo "type: git_repo"
-        echo "primary_branch: beta"
+        echo "primary_branch: main"
         echo "path: ~/goose_purge_macro"
         echo "origin: https://github.com/Graylag-PD/Goose-Purge-Macro.git"
         echo "managed_services: klipper"
