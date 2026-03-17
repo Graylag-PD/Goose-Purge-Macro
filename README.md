@@ -1,6 +1,6 @@
 # Goose Purge Macro - BETA
 ## About
-Goose Purge Macro (GPM) is the next generation of the control macro originally intended for the Goose Belt Purger. It has been split from the GBP repository to allow for a smooth automated updating mechanism, but also to simplify further development and improve the way software configuration is documented.  
+Goose Purge Macro (GPM) is the next generation of the control macro originally intended for the [Goose Belt Purger](https://github.com/Graylag-PD/Goose-Belt-Purger). It has been split from the GBP repository to allow for a smooth automated updating mechanism, but also to simplify further development and improve the way software configuration is documented.  
 Primary use of the GPM is still the control of the Goose Belt Purger, but it can also be used to control other compatible belt purge systems.  
   
 Goose Purge Macro is currently in BETA phase. It has been tested and proven to work, but as each printer is unique, you can run into any kind of issues. If you run into any issues, make sure to let us know preferably through Discord.
@@ -8,19 +8,6 @@ If you want to taste the GPM but don't want to loose your existing GBP macro con
 Once the final released version of the macro gets released, you will have an option to easily migrate from BETA with the configuration preserved.  
   
 A more detailed documentation is comming, but is not available yet.  
-## Changes from GBP macro v0.7.3
-The main upgrade over the old version is the automated installation and updating mechanism, which makes for easy upgrade path to future releases. As part of this effort, the configuration variables have been splitted from the main macro body and now reside in an independent file. A python module has also been incorporated and although it is not used yet, it is expected to be utilised with future releases.  
-The second main feature is the official support of the stepper motor based purgers.  
-Finally the third bigger change is an improved support for the HappyHare MMU control module.  
-  
-Many other smaller tweaks have been made with relatively minor impact. Here are points where the GPM behaves differently from v0.7.3  
-- Macro now processes both PURGE_LENGTH and PURGE_VOLUME parameters and adds them up if both are provided.  
-- Parameters LENGTH and VOLUME are no longer supported.  
-- A new parameter HAPPYHARE has been introduced to instruct the macro to interface with the HappyHare. A wrapper `_goose_purge_hh` remains in place and can be used to directly call macro with this parameter.  
-- Macro now no longer requires Z axis homed if you don't move the Z axis during purging.  
-- Default values for some variables have been changed.  
-  
-Additional features may be added with further releases, check the release notes for more details.  
 
 ## Instalation and updating
 ### Automated instalation.
@@ -31,6 +18,8 @@ SSH into your printer and run following code:
 git clone https://github.com/Graylag-PD/Goose-Purge-Macro.git goose_purge_macro
 bash ~/goose_purge_macro/install.sh
 ```
+The installation scrip will try to figure out your default configuration folder and copy the files to it. If you prefer to use different location, you can run the installation script with the `-c [PATH]` option, where PATH is the absolute path to target location, e.g. `-c ~/printer_data/config/goose_purge/` would copy the files to **preexisting** `goose_purge` folder within your klipper configuration folder.
+  
 Afterwards add `[include goose_purge.cfg]` to printer.cfg and restart the klipper.
   
 Don't forget to configure the `goose_purge.cfg` file to match your setup.  
@@ -101,6 +90,20 @@ git pull
 bash ~/goose_purge_macro/install.sh
 ```
 
+## Changes from GBP macro v0.7.3
+The main upgrade over the old version is the automated installation and updating mechanism, which makes for easy upgrade path to future releases. As part of this effort, the configuration variables have been splitted from the main macro body and now reside in an independent file. A python module has also been incorporated and although it is not used yet, it is expected to be utilised with future releases.  
+The second main feature is the official support of the stepper motor based purgers.  
+Finally the third bigger change is an improved support for the HappyHare MMU control module.  
+  
+Many other smaller tweaks have been made with relatively minor impact. Here are points where the GPM behaves differently from v0.7.3  
+- Macro now processes both PURGE_LENGTH and PURGE_VOLUME parameters and adds them up if both are provided.  
+- Parameters LENGTH and VOLUME are no longer supported.  
+- A new parameter HAPPYHARE has been introduced to instruct the macro to interface with the HappyHare. A wrapper `_goose_purge_hh` remains in place and can be used to directly call macro with this parameter.  
+- Macro now no longer requires Z axis homed if you don't move the Z axis during purging.  
+- Default values for some variables have been changed.  
+  
+Additional features may be added with further releases, check the release notes for more details.  
+
 ## Usage
 For the most part the usage remains the same as with the old macro, so please refer to the original GBP documentation.  
 Here are notable differences:  
@@ -139,8 +142,9 @@ If you would like to restore the way the wrapper worked in previous versions, ad
 You should now also change your HappyHare configuration to call the purge macro from the `purge_macro:` handle (in mmu_parameters.cfg) instead of the `variable_user_post_load_extension` variable. The only thing to keep in mind is that the `purge_macro:` handle is case sensitive, so you need to watch your capitalization.  
 
 ## FAQ
-### Can I automaticaly migrate my GBP macro v0.7.3 to GPM?
-Unfortunately not and you will likely have to manually transfer all you variable values. Most if not all variables have kept their name so it is pretty simple to search for corresponding variables.  
+### Can I automaticaly migrate my GBP macro v0.7.3 (or older) to GPM?
+Yes! When you run the installation script, it checks the configuration folder for the goose_purge.cfg and if not found, offers you the default configuration file. If you select the DC motor configuration, it will additionally look for the goose_belt.cfg in the same location and if found, will offer to migrate the variables. Keep in mind, that even in case of successfull migration you should still review the new configuration file and verify, that all values are correct.  
+Unfortunately there is no migration option for stepper motor users. 
 
 ### What if I am an advanced user and I want to modify the main macro myself?
 You have several options:  
@@ -159,4 +163,4 @@ git should correctly merge any incomming changes into your files. Probably.
 Create a github fork of this repo, do any kind of changes you like and redirect the Moonraker to your new repo instead.
 
 ## Credits
-The Goose Purge Macro has been made by Graylag and Dragi2k.
+The Goose Purge Macro has been made by Graylag and Dragi2k. Installation script improved by Orloaf.
