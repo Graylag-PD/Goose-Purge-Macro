@@ -29,6 +29,13 @@ Updates are managed by Moonraker and in most cases you can just hit the update b
 The installation script is designed to always preserve your configuration, so don't hesitate to run it anytime.  
   
 Note, that since the update mechanism does not alter your configuration file, it may happen, that the new feature gets introduced, yet you will not see the associated variables. If that happens, simply copy the variables name from docs and paste it into your configuration file.  
+#### Switching development branches
+If you would like to switch which github branch is used, e.g. from beta to main or other way around, you can do that by running following commands:
+```
+cd ~/goose_purge_macro
+git checkout main
+```
+Don't forget to also update the moonraker.conf, changing the `primary_branch: beta` to `primary_branch: main`
 
 ### Manual instalation.
 For advanced users who would like to modify any of the parameters (e.g. file locations) or for less common configurations where automated script fails  
@@ -69,11 +76,11 @@ sudo ln -sf ~/goose_purge_macro/goose_purge.py ~/klipper/klippy/extras/goose_pur
 ```
   
 In the next step you are going to configure the Moonraker Update Manager for automated updating.  
-Open the `moonraker.cfg` file and add following lines:  
+Open the `moonraker.conf` file and add following lines:  
 ```
 [update_manager goose_purge]
 type: git_repo
-primary_branch: beta
+primary_branch: main
 path: ~/goose_purge_macro
 origin: https://github.com/Graylag-PD/Goose-Purge-Macro.git
 managed_services: klipper
